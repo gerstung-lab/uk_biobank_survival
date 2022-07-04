@@ -1,4 +1,3 @@
 # gitignore file
 hdf5_files/
 scripts/draft_scripts.ipynb
-.gitignore
