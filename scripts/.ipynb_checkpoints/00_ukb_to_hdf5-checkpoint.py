@@ -9,7 +9,7 @@ import h5py
 import numpy as np 
 import pandas as pd 
 
-ROOT_DIR = '/nfs/research/sds/sds-ukb-cancer/'
+ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
 
 #run_id = int(sys.argv[1]) # Variable from cluster
 run_id=1
