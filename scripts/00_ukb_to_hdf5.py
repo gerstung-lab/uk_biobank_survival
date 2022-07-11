@@ -101,13 +101,12 @@ for _, dd in tqdm.tqdm(enumerate(ukb_iterator)):
     row_ind, col_ind = np.where(d_codes)
     dim_ = d_codes.shape 
     
-    with h5py.File(ROOT_DIR + 'projects/MultiRisk/data/main/ukb_' + str(run_id) + '.h5', 'a') as f:
+    with h5py.File('' + str(run_id) + '.h5', 'a') as f:
         f.create_group(str(eid[0]))
-        f[str(eid[0])].create_group('MedRec')
-        f[str(eid[0])]['MedRec'].create_dataset('time', data=time, maxshape=(None, 3), compression='lzf')
-        f[str(eid[0])]['MedRec'].create_dataset('row_ind', data=row_ind, maxshape=(None), compression='lzf')
-        f[str(eid[0])]['MedRec'].create_dataset('col_ind', data=col_ind, maxshape=(None), compression='lzf')
-        f[str(eid[0])]['MedRec'].create_dataset('dim', data=np.asarray(dim_), maxshape=(2), compression='lzf')
+        f[str(eid[0])].create_dataset('time', data=time, maxshape=(None, 3), compression='lzf')
+        f[str(eid[0])].create_dataset('row_ind', data=row_ind, maxshape=(None), compression='lzf')
+        f[str(eid[0])].create_dataset('col_ind', data=col_ind, maxshape=(None), compression='lzf')
+        f[str(eid[0])].create_dataset('dim', data=np.asarray(dim_), maxshape=(2), compression='lzf')
 
   
 # for i in {251..600}; do bsub -env "VAR1=$i" -n 1 -M 1000 -R "rusage[mem=1000]" './00_ukb_to_hdf5.sh'; done
