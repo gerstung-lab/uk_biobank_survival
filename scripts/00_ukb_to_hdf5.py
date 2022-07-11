@@ -101,7 +101,7 @@ for _, dd in tqdm.tqdm(enumerate(ukb_iterator)):
     row_ind, col_ind = np.where(d_codes)
     dim_ = d_codes.shape 
     
-    with h5py.File('' + str(run_id) + '.h5', 'a') as f:
+    with h5py.File('../hdf5_files/ukb_' + str(run_id) + '.h5', 'a') as f:
         f.create_group(str(eid[0]))
         f[str(eid[0])].create_dataset('time', data=time, maxshape=(None, 3), compression='lzf')
         f[str(eid[0])].create_dataset('row_ind', data=row_ind, maxshape=(None), compression='lzf')
