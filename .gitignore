@@ -2,3 +2,5 @@
 hdf5_files/
 scripts/draft_scripts.ipynb
 scripts/.ipynb_checkpoints
+scripts/*_err.txt
+scripts/*_out.txt
