@@ -16,7 +16,7 @@ from torch.utils.data import Dataset, DataLoader, Sampler
 
 np.random.seed(7)
 
-ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
+ROOT_DIR = '/nfs/research/sds/sds-ukb-cancer/'
 
 dtype = torch.FloatTensor
 # Sampler
@@ -68,9 +68,9 @@ class PIPE(Dataset):
         return(10e100)
 
     def __getitem__(self, eid):
-        time = self.f[eid]['MedRec']['time'][:]
-        X = np.zeros(self.f[eid]['MedRec']['dim'][:])
-        X[self.f[eid]['MedRec']['row_ind'][:], self.f[eid]['MedRec']['col_ind'][:]] = 1
+        time = self.f[eid]['time'][:]
+        X = np.zeros(self.f[eid]['dim'][:])
+        X[self.f[eid]['row_ind'][:], self.f[eid]['col_ind'][:]] = 1
         X = np.minimum(1, np.cumsum(X, axis=0))[:-1, :]                       
         idx_event = X[:, self.event_idx] == 1
         time =  time[~idx_event, :]   
