@@ -11,8 +11,8 @@ import pandas as pd
 
 ROOT_DIR = '/nfs/research/sds/sds-ukb-cancer/'
 
-#run_id = int(sys.argv[1]) # Variable from cluster
-run_id=1
+run_id = int(sys.argv[1]) # Variable from cluster
+# run_id=1
 
 print(run_id)
 
