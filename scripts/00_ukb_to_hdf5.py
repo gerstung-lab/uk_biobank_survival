@@ -31,7 +31,7 @@ icd10_codes.head()
 #=======================================================================================================================
 ukb_iterator = pd.read_csv(ROOT_DIR + 'main/44968/ukb44968.csv', iterator=True, chunksize=1, nrows=1000, skiprows=lambda x: x in np.arange(1, 1000*run_id).tolist()) # iterate over ukb dataset for 1000 per job
 
-for _, dd in tqdm.tqdm(enumerate(ukb_iterator)):
+for _, dd in enumerate(ukb_iterator):
 
     # basics - adj., sex, EOO, birthdate
     dd.reset_index(inplace=True)
