@@ -32,27 +32,28 @@ dtype = torch.FloatTensor
 torch.manual_seed(43)
 np.random.seed(7)
 
-ROOT_DIR = '/nfs/research1/gerstung/sds/sds-ukb-cancer/'
+ROOT_DIR = '/nfs/research/sds/sds-ukb-cancer/'
 
-sys.path.append(ROOT_DIR + 'projects/MultiRisk/scripts/dataloader')
+# sys.path.append('/nfs/research/gerstung/rui/uk_biobank_survival/scripts/dataloader')
+sys.path.append('./dataloader')
 from dataloader import RandomSampler, PIPE, custom_collate, ProportionalSampler
 
-icd10_codes = pd.read_csv(ROOT_DIR + 'projects/MultiRisk/icd10_codes.csv', header=None)
+icd10_codes = pd.read_csv('../icd10_codes.csv', header=None)
 icd10_codes.iloc[:, 1] = icd10_codes.iloc[:, 1].apply(lambda x: x[20:]) # removes Source of report of 
 icd10_codes = icd10_codes.groupby(0).first()
 icd10_code_names = np.squeeze(np.asarray(icd10_codes))
 icd10_codes.head()
 
-idx_list = np.load(ROOT_DIR + 'projects/MultiRisk/data/main/idxlist.txt')
+
+idx_list = np.load('../event_files/idxlist.txt.npy')
    
-event_count = np.load(ROOT_DIR + 'projects/MultiRisk/data/main/event_count.txt')
+event_count = np.load('../event_files/event_count.txt.npy')
 
-eventlocations = pickle.load(open(ROOT_DIR + 'projects/MultiRisk/data/main/eventlocations.txt', 'rb' ))
-
+eventlocations = pickle.load(open('../event_files/eventlocations.txt', 'rb' ))
 
 
 #run_id = int(sys.argv[1]) # Variable from cluster
-run_id=202
+run_id=114
 print(run_id)
 print(icd10_code_names[run_id])
 
@@ -64,7 +65,7 @@ batchsize = 1024
 sampling_props = [len(idx_list), batchsize, event_count[run_id], None]
 eventlocations[run_id]
 
-pipe = PIPE(file=ROOT_DIR + 'projects/MultiRisk/data/main/ukb.h5', event_idx=run_id)
+pipe = PIPE(file='../hdf5_files/ukb.h5', event_idx=run_id)
 dataloader = DataLoader(pipe, batch_size=batchsize, num_workers=12, prefetch_factor=1, collate_fn=custom_collate, sampler=ProportionalSampler(idx=idx_list, eventlocations=eventlocations[run_id], iteri=int(10e5), eventsamples=100, randomsamples=batchsize, batchsize=batchsize))
 
 # Inference
@@ -79,13 +80,27 @@ m = pcox.PCox(sampling_proportion=sampling_props, predictor=predictor)
 m.initialize(eta=0.01, num_particles=5, rank=30) 
 
 loss=[0]
-for _, data in tqdm.tqdm(enumerate(dataloader)):
-    loss.append(m.infer(data=data))
-            
-        
-g = m.return_guide()
-out = g.quantiles([0.025, 0.5, 0.975])
 
-dd = icd10_code_names
-dd = np.delete(dd, run_id)
-dd[np.argsort(-out['theta'][1].detach().numpy()[:, 0])][:25]
+
+for i, data in tqdm.tqdm(enumerate(dataloader)):
+    loss.append(m.infer(data=data))
+    if i%100==0:
+        np.save('../inference_objects/loss_to_aspergillosis.npy',loss)
+        try:
+            m_guide_loc=np.load('../inference_objects/m_to_aspergillosis_guide_loc.npy')
+            xx=np.array(m.guide.loc.cpu().detach().numpy(),ndmin=2)
+            m_guide_loc=np.concatenate((m_guide_loc,xx))
+            np.save('../inference_objects/m_to_aspergillosis_guide_loc.npy',m_guide_loc)
+            m_guide_scale=np.load('../inference_objects/m_to_aspergillosis_guide_scale.npy')
+            xx=np.array(m.guide.scale.cpu().detach().numpy(),ndmin=2)
+            m_guide_scale=np.concatenate((m_guide_scale,xx))
+            np.save('../inference_objects/m_to_aspergillosis_guide_scale.npy',m_guide_scale)
+        except:
+            m_guide_loc=m.guide.loc.cpu().detach().numpy()
+            m_guide_loc=np.array(m_guide_loc,ndmin=2)
+            np.save('../inference_objects/m_to_aspergillosis_guide_loc.npy',m_guide_loc)
+            m_guide_scale=m.guide.scale.cpu().detach().numpy()
+            m_guide_scale=np.array(m_guide_scale,ndmin=2)
+            np.save('../inference_objects/m_to_aspergillosis_guide_scale.npy',m_guide_scale)
+    if i > 100000:
+        break
