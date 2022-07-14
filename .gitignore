@@ -1,7 +1,0 @@
-# gitignore file
-hdf5_files/
-scripts/draft_scripts.ipynb
-scripts/*_err.txt
-scripts/*_out.txt
-scripts/dataloader/__pycache__/
-.ipynb_checkpoints/
