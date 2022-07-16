@@ -29,8 +29,8 @@ warnings.filterwarnings("ignore")
 
 dtype = torch.FloatTensor
 
-torch.manual_seed(43)
-np.random.seed(7)
+torch.manual_seed(4443)
+np.random.seed(789)
 
 ROOT_DIR = '/nfs/research/sds/sds-ukb-cancer/'
 
@@ -76,8 +76,8 @@ def predictor(data):
     return(pred)
 
 pyro.clear_param_store()
-m = pcox.PCox(sampling_proportion=sampling_props, predictor=predictor)
-m.initialize(eta=0.01, num_particles=5, rank=30) 
+m = pcox.PCox(sampling_proportion=sampling_props, predictor=predictor,loss=pyro.infer.Trace_ELBO())
+m.initialize(eta=0.01, num_particles=5, rank=30,seed=37264) 
 
 loss=[0]
 
@@ -85,22 +85,22 @@ loss=[0]
 for i, data in tqdm.tqdm(enumerate(dataloader)):
     loss.append(m.infer(data=data))
     if i%100==0:
-        np.save('../inference_objects/loss_to_aspergillosis.npy',loss)
+        np.save('../inference_objects/loss_to_aspergillosis3.npy',loss)
         try:
-            m_guide_loc=np.load('../inference_objects/m_to_aspergillosis_guide_loc.npy')
+            m_guide_loc=np.load('../inference_objects/m_to_aspergillosis_guide_loc3.npy')
             xx=np.array(m.guide.loc.cpu().detach().numpy(),ndmin=2)
             m_guide_loc=np.concatenate((m_guide_loc,xx))
-            np.save('../inference_objects/m_to_aspergillosis_guide_loc.npy',m_guide_loc)
-            m_guide_scale=np.load('../inference_objects/m_to_aspergillosis_guide_scale.npy')
+            np.save('../inference_objects/m_to_aspergillosis_guide_loc3.npy',m_guide_loc)
+            m_guide_scale=np.load('../inference_objects/m_to_aspergillosis_guide_scale3.npy')
             xx=np.array(m.guide.scale.cpu().detach().numpy(),ndmin=2)
             m_guide_scale=np.concatenate((m_guide_scale,xx))
-            np.save('../inference_objects/m_to_aspergillosis_guide_scale.npy',m_guide_scale)
+            np.save('../inference_objects/m_to_aspergillosis_guide_scale3.npy',m_guide_scale)
         except:
             m_guide_loc=m.guide.loc.cpu().detach().numpy()
             m_guide_loc=np.array(m_guide_loc,ndmin=2)
-            np.save('../inference_objects/m_to_aspergillosis_guide_loc.npy',m_guide_loc)
+            np.save('../inference_objects/m_to_aspergillosis_guide_loc3.npy',m_guide_loc)
             m_guide_scale=m.guide.scale.cpu().detach().numpy()
             m_guide_scale=np.array(m_guide_scale,ndmin=2)
-            np.save('../inference_objects/m_to_aspergillosis_guide_scale.npy',m_guide_scale)
-    if i > 100000:
+            np.save('../inference_objects/m_to_aspergillosis_guide_scale3.npy',m_guide_scale)
+    if i > 200000:
         break
