@@ -55,7 +55,11 @@ for _, dd in enumerate(ukb_iterator):
     if EOO == EOO:
         pass
     else:
-        EOO = np.datetime64('2021-01-01', 'D')[None] # set some end date of study
+        date_of_death=np.datetime64(dd['40000-0.0'].item())
+        if ~np.isnat(date_of_death):
+            EOO=date_of_death[None]
+        else:
+            EOO = np.datetime64('2021-01-01', 'D')[None] # set some end date of study
 
     # extract first occurence data - cat 1712
     d_codes = []
