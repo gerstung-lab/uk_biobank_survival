@@ -78,6 +78,9 @@ class PIPE(Dataset):
         X = np.delete(X, self.event_idx, axis=1)
         if np.sum(idx_event) > 0:
             time[-1, -1] = 1
+            #remove all disease events 1 year before outcome event:
+            event_time=time[-1,1]
+            print(event_time)
         return(torch.from_numpy(time).type(dtype), torch.from_numpy(X).type(dtype))
                        
     def __close__(self):
