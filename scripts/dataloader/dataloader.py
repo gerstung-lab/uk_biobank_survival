@@ -80,7 +80,12 @@ class PIPE(Dataset):
             time[-1, -1] = 1
             #remove all disease events 1 year before outcome event:
             event_time=time[-1,1]
-            print(event_time)
+            event_status=time[-1, -1]
+            rows_to_keep=[i<event_time-365 for i in time[:,0]]
+            time=time[rows_to_keep,:]
+            time[-1, -1]=event_status
+            time[-1,1]=event_time
+            print(time)
         return(torch.from_numpy(time).type(dtype), torch.from_numpy(X).type(dtype))
                        
     def __close__(self):
