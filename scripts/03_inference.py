@@ -77,11 +77,7 @@ def predictor(data):
 
 pyro.clear_param_store()
 m = pcox.PCox(sampling_proportion=sampling_props, predictor=predictor)
-<<<<<<< HEAD
-m.initialize(eta=0.05, num_particles=5, rank=200,seed=6006) 
-=======
 m.initialize(eta=0.05, num_particles=5, rank=30,seed=364) 
->>>>>>> add_death_date
 
 loss=[0]
 
@@ -89,25 +85,6 @@ loss=[0]
 for i, data in tqdm.tqdm(enumerate(dataloader)):
     loss.append(m.infer(data=data))
     if i%100==0:
-<<<<<<< HEAD
-        np.save('../inference_objects/loss_to_aspergillosis7.npy',loss)
-        try:
-            m_guide_loc=np.load('../inference_objects/m_to_aspergillosis_guide_loc7.npy')
-            xx=np.array(m.guide.loc.cpu().detach().numpy(),ndmin=2)
-            m_guide_loc=np.concatenate((m_guide_loc,xx))
-            np.save('../inference_objects/m_to_aspergillosis_guide_loc7.npy',m_guide_loc)
-            m_guide_scale=np.load('../inference_objects/m_to_aspergillosis_guide_scale7.npy')
-            xx=np.array(m.guide.scale.cpu().detach().numpy(),ndmin=2)
-            m_guide_scale=np.concatenate((m_guide_scale,xx))
-            np.save('../inference_objects/m_to_aspergillosis_guide_scale7.npy',m_guide_scale)
-        except:
-            m_guide_loc=m.guide.loc.cpu().detach().numpy()
-            m_guide_loc=np.array(m_guide_loc,ndmin=2)
-            np.save('../inference_objects/m_to_aspergillosis_guide_loc7.npy',m_guide_loc)
-            m_guide_scale=m.guide.scale.cpu().detach().numpy()
-            m_guide_scale=np.array(m_guide_scale,ndmin=2)
-            np.save('../inference_objects/m_to_aspergillosis_guide_scale7.npy',m_guide_scale)
-=======
         np.save('../inference_objects/loss_to_aspergillosis.npy',loss)
         try:
             m_guide_loc=np.load('../inference_objects/m_to_aspergillosis_guide_loc.npy')
@@ -125,6 +102,5 @@ for i, data in tqdm.tqdm(enumerate(dataloader)):
             m_guide_scale=m.guide.scale.cpu().detach().numpy()
             m_guide_scale=np.array(m_guide_scale,ndmin=2)
             np.save('../inference_objects/m_to_aspergillosis_guide_scale.npy',m_guide_scale)
->>>>>>> add_death_date
     if i > 200000:
         break
