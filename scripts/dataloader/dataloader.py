@@ -85,6 +85,7 @@ class PIPE(Dataset):
             time=time[rows_to_keep,:]
             time[-1, -1]=event_status
             time[-1,1]=event_time
+            X=X[rows_to_keep,:]
         return(torch.from_numpy(time).type(dtype), torch.from_numpy(X).type(dtype))
                        
     def __close__(self):
